@@ -22,7 +22,7 @@ proc createHeaders(headers: RawHeaders): string =
 
     result = result[0 .. ^3] # Strip trailing \c\L
 
-proc handleRequest*[T](routers: seq[RouteProc], req: Request, ctx: T): Future[void] {.async, gcsafe.} =
+proc handleRequest*[T](routers: seq[RouteProc[T]], req: Request, ctx: T): Future[void] {.async, gcsafe.} =
   for router in routers:
     let repOpt = await router(req, ctx)
     if repOpt.isSome:
