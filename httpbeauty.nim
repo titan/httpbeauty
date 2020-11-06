@@ -69,7 +69,7 @@ template resp*(content: string, contentType = "text/html;charset=utf-8"): void =
 template resp*(content: JsonNode): void =
   ## Serializes ``content`` as the response, sets ``Http200`` as status code
   ## and "application/json" Content-Type.
-  resp($content, contentType="application/json")
+  resp($content, contentType="application/json;charset=utf-8")
 
 template resp*(code: HttpCode, content: string,
                contentType = "text/html;charset=utf-8"): void =
