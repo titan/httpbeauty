@@ -1,6 +1,4 @@
 import asyncdispatch, cgi, httpbeast, httpcore, json, options, parseutils, strtabs, strutils, tables, uri
-import redis except `%`
-
 
 type
   RawHeaders* = seq[tuple[key, val: string]]
@@ -63,7 +61,7 @@ template resp*(code: HttpCode,
     setHeader(ret[1], header[0], header[1])
   result = some[ResponseData](ret)
 
-template resp*(content: string, contentType = "text/html;charset=utf-8"): void =
+template resp*(content: string, contentType = "text/html; charset=utf-8"): void =
   ## Sets ``content`` as the response; ``Http200`` as the status code
   ## and ``contentType`` as the Content-Type.
   resp(Http200, [("Content-Type", contentType)], content)
@@ -71,10 +69,10 @@ template resp*(content: string, contentType = "text/html;charset=utf-8"): void =
 template resp*(content: JsonNode): void =
   ## Serializes ``content`` as the response, sets ``Http200`` as status code
   ## and "application/json" Content-Type.
-  resp($content, contentType="application/json;charset=utf-8")
+  resp($content, contentType="application/json; charset=utf-8")
 
 template resp*(code: HttpCode, content: string,
-               contentType = "text/html;charset=utf-8"): void =
+               contentType = "text/html; charset=utf-8"): void =
   ## Sets ``content`` as the response; ``code`` as the status code
   ## and ``contentType`` as the Content-Type.
   resp(code, [("Content-Type", contentType)], content)
