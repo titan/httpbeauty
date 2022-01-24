@@ -11,7 +11,7 @@ type
 
   MultiData* = OrderedTable[string, tuple[fields: StringTableRef, body: string]]
 
-  RouteProc*[T] = proc (request: Request, ctx: T): Future[Option[ResponseData]] {.gcsafe, locks:0.}
+  RouteProc*[T] = proc (request: Request, ctx: T): Future[Option[ResponseData]] {.locks:0.}
 
 proc createHeaders(headers: RawHeaders): string =
   result = ""
@@ -22,9 +22,9 @@ proc createHeaders(headers: RawHeaders): string =
 
     result = result[0 .. ^3] # Strip trailing \c\L
 
-proc handleRequest*[T](routers: seq[RouteProc[T]], req: Request, ctx: T): Future[void] {.async, gcsafe.} =
+proc handleRequest*[T](routers: seq[RouteProc[T]], req: Request, ctx: T): Future[void] =
   for router in routers:
-    let repOpt = await router(req, ctx)
+    let repOpt = waitFor router(req, ctx)
     if repOpt.isSome:
       let
         (code, headers, content) = repOpt.get
@@ -157,7 +157,6 @@ proc parseMultiPart*(body: string, boundary: string): MultiData =
     i += body.skipWhitespace(i)
 
     result.add(name, newPart)
-
 
 proc parseMPFD(contentType: string, body: string): MultiData =
   var boundaryEqIndex = contentType.find("boundary=")+9
